@@ -3,7 +3,46 @@ var app = angular.module('StarterApp', ['ngMaterial', 'googlechart', 'ngMdIcons'
 app.controller('AppCtrl', ['$scope', '$http', '$mdSidenav', function($scope, $http, $mdSidenav) {
   // Alaways load the main layout file, application start point
   $scope.nav = 'partials/main.html';
+  // Mock data, for last 3 months
+  $scope.data = [
+    {
+      month: 'Janurai',
+      amount: 100,
+      category: 'övrigt'
+    },
+    {
+      month: 'Februari',
+      amount: 200,
+      category: 'mat'
+    },
+    {
+      month: 'Februari',
+      amount: 100,
+      category: 'mat'
+    },
+    {
+      month: 'Mars',
+      amount: 400,
+      category: 'räkningar'
+    },
+    {
+      month: 'Mars',
+      amount: 300,
+      category: 'räkningar'
+    }
+  ];
 
+  $scope.initialFetch = function() {
+    $scope.totalThisMonth = 0;
+    for (x in $scope.data) {
+      // will change, set current month before check in loop
+      if ($scope.data[x].month === 'Mars') {
+        $scope.totalThisMonth += $scope.data[x].amount;
+        console.log('adding ' + $scope.data[x].amount);
+      }
+    }
+  };
+  $scope.initialFetch();
   // Menu item selection and loading of partials to content area
   $scope.doNav = function(partial) {
     switch (partial) {
@@ -14,7 +53,7 @@ app.controller('AppCtrl', ['$scope', '$http', '$mdSidenav', function($scope, $ht
         $scope.nav = 'partials/main.html';
         break;
       case 'write':
-        $scope.nav = 'partials/write.html';
+        $scope.nav = 'partials/new.html';
         break;
       default:
         $scope.nav = 'partials/main.html';

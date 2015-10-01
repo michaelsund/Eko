@@ -1,6 +1,7 @@
 var app = angular.module('StarterApp', ['ngMaterial', 'googlechart', 'ngMdIcons']);
 
 app.controller('AppCtrl', ['$scope', '$http', '$mdSidenav', function($scope, $http, $mdSidenav) {
+  console.log('loaded main controller');
   // Alaways load the main layout file, application start point
   $scope.nav = 'partials/main.html';
 
@@ -13,8 +14,14 @@ app.controller('AppCtrl', ['$scope', '$http', '$mdSidenav', function($scope, $ht
       case 'overview':
         $scope.nav = 'partials/main.html';
         break;
-      case 'write':
-        $scope.nav = 'partials/write.html';
+      case 'add':
+        $scope.nav = 'partials/add.html';
+        break;
+      case 'graph':
+        $scope.nav = 'partials/graph.html';
+        break;
+      case 'details':
+        $scope.nav = 'partials/details.html';
         break;
       default:
         $scope.nav = 'partials/main.html';
@@ -27,40 +34,64 @@ app.controller('AppCtrl', ['$scope', '$http', '$mdSidenav', function($scope, $ht
     $mdSidenav(menuId).toggle();
   };
 
+  $scope.fetchData = function() {
+    console.log('fetching data');
+    // Mock data
+    $scope.salarysThisMonth = [
+      20000,
+      10000
+    ];
+
+    $scope.thisMonth = [
+      {
+        'category':'Räkningar',
+        'amount':7000,
+        'date':'2015-01-01'
+      },
+      {
+        'category':'Mat',
+        'amount':2000,
+        'date':'2015-01-02'
+      }
+    ];
+
+    // Calculations
+    $scope.totalSalaryThisMonth = 0;
+    for (x in $scope.salarysThisMonth) {
+      $scope.totalSalaryThisMonth += $scope.salarysThisMonth[x];
+    }
+  };
+  $scope.fetchData();
 }]);
 
 angular.module('StarterApp')
 .controller('charts', function ($scope) {
   $scope.chartObject = {};
-  $scope.chartObject.type = "AreaChart";
+  $scope.chartObject.type = 'AreaChart';
   $scope.onions = [
-      {v: "Onions"},
+      {v: 'Onions'},
       {v: 3},
   ];
-  $scope.chartObject.data = {"cols": [
-      {id: "t", label: "Topping", type: "string"},
-      {id: "s", label: "Slices", type: "number"}
-  ], "rows": [
+  $scope.chartObject.data = {'cols': [
+      {id: 't', label: 'Topping', type: 'string'},
+      {id: 's', label: 'Slices', type: 'number'}
+  ], 'rows': [
       {c: [
-          {v: "Mushrooms"},
+          {v: 'Mushrooms'},
           {v: 3},
       ]},
       {c: $scope.onions},
       {c: [
-          {v: "Olives"},
+          {v: 'Olives'},
           {v: 31}
       ]},
       {c: [
-          {v: "Zucchini"},
+          {v: 'Zucchini'},
           {v: 1},
       ]},
       {c: [
-          {v: "Pepperoni"},
+          {v: 'Pepperoni'},
           {v: 2},
       ]}
   ]};
-
-  $scope.chartObject.options = {
-      'title': 'How Much Pizza I Ate Last Night'
-  };
 });

@@ -3,3 +3,7 @@
   font-weight: inherit;
   margin: inherit;
 }
+
+.currentMonth {
+  text-transform:capitalize;
+}

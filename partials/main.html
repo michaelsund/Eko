@@ -1,27 +1,37 @@
-<<<<<<< HEAD
-<div>
-  <md-content class="md-padding">
-    <md-card>
-      <!-- <img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out"> -->
-      <md-card-content>
-        <h2 class="md-title">Totalt in: {{ totalSalaryThisMonth }}</h2>
-        <p>
-          test
-        </p>
-      </md-card-content>
-    </md-card>
-  </md-content>
-  <md-content class="md-padding">
-    <md-card>
-      <!-- <img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out"> -->
-      <md-card-content>
-        <h2 class="md-title">Totalt ut: {{ totalSalaryThisMonth }}</h2>
-      </md-card-content>
-    </md-card>
-  </md-content>
-=======
-<div ng-controller="charts">
-  Total this month <span ng-bind="totalThisMonth"></span>
-    <!-- <div google-chart chart="chartObject" style="height:80%; width:100%"></div> -->
->>>>>>> 1b80cf5ff332e78f87814ad10a53963570651ed0
+<div layout="column" layout-align="center center">
+  <h2 ng-cloak class="currentMonth">{{selected.year}} / {{selected.month}}</h2>
+  <form name="myMonthForm">
+    <md-input-container>
+      <md-select placeholder="År" ng-model="selected.year" md-on-open="dummy()" style="min-width: 200px;" required>
+        <md-option ng-value="year" ng-repeat="year in yearsAvailable">{{year}}</md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container>
+      <md-select placeholder="Månad" ng-model="selected.month" md-on-open="calculations()" style="min-width: 200px;" required>
+        <md-option ng-value="month" ng-repeat="month in monthsAvailable">{{month}}</md-option>
+      </md-select>
+    </md-input-container>
+  </form>
 </div>
+
+<md-content class="md-padding">
+  <md-card>
+    <md-card-content>
+      <h2 class="md-title">Totalt in: {{ totalSalaryThisMonth }}</h2>
+      <span ng-repeat="x in salarysThisMonth">
+        {{x.type}} {{x.value}}<br>
+      </span>
+    </md-card-content>
+  </md-card>
+</md-content>
+<md-content class="md-padding">
+  <md-card>
+    <md-card-content>
+      <h2 class="md-title">Totalt ut: {{ totalThisMonth }}</h2>
+      {{ plusminusSign }} <span ng-bind="plusminus"></span> denna månad
+      <section layout="row" layout-sm="row" layout-align="center center" layout-wrap>
+        <md-button class="md-raised md-primary" ng-click="doNav('details-view')">Lista månad</md-button>
+      </section>
+    </md-card-content>
+  </md-card>
+</md-content>

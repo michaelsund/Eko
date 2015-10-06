@@ -1,0 +1,26 @@
+[
+  {
+    "year": 2015,
+    "months": [
+      {
+        "month":"Oktober",
+        "data": [
+          {"type":"Skatt","value":2000,"by":"Michael"},
+          {"type":"Lön","value":10000,"by":"Emelie"}
+        ]
+      }
+    ]
+  },
+  {
+    "year": 2014,
+    "months": [
+      {
+        "month":"Januari",
+        "data": [
+          {"type":"Skatt","value":1000,"by":"Michael"},
+          {"type":"Lön","value":3000,"by":"Emelie"}
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "year": 2015,
+    "months": [
+      {
+        "month":"Oktober",
+        "data": [
+          {
+            "category":"Räkningar",
+            "amount":7000,
+            "date":"2015-10-01",
+            "by":"Michael"
+          },
+          {
+            "category":"Mat",
+            "amount":500,
+            "date":"2015-10-05",
+            "by":"Emelie"
+          }
+        ]
+      },
+      {
+        "month":"September",
+        "data": [
+          {
+            "category":"Räkningar",
+            "amount":2000,
+            "date":"2015-09-01",
+            "by":"Michael"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "year": 2014,
+    "months": [
+      {
+        "month":"Januari",
+        "data": [
+          {
+            "category":"Räkningar",
+            "amount":1000,
+            "date":"2015-10-01",
+            "by":"Michael"
+          }
+        ]
+      },
+      {
+        "month":"November",
+        "data": [
+          {
+            "category":"Räkningar",
+            "amount":20000,
+            "date":"2015-09-01",
+            "by":"Michael"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,22 +1,22 @@
-var app = angular.module('StarterApp', ['ngMaterial', 'googlechart', 'ngMdIcons', 'angularMoment']);
+/* global moment */
+/* global angular */
+var app = angular.module('StarterApp', ['ngMaterial', 'googlechart', 'ngMdIcons', 'angularMoment', 'ngStorage']);
 
 app.run(function(amMoment) {
   amMoment.changeLocale('sv');
 });
 
-app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav) {
+app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage) {
   console.log('loaded main controller');
-  var salaryPromise = $q.defer();
-  var costsPromise = $q.defer();
-  var calculationsPromise = $q.defer();
 
   // Vars
+  $scope.$storage = $localStorage;
   $scope.costs = 0;
   $scope.salary = 0;
   $scope.selected = {
-    'month': new moment().format('MMMM'),
+    'month': moment().format('MMMM'),
     // 'month': 'September',
-    'year': new moment().format('YYYY')
+    'year': moment().format('YYYY')
   };
   $scope.initializing = true;
   $scope.datasetSalary = [];
@@ -26,31 +26,64 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav) {
   $scope.plusminus = 0;
   $scope.plusminusSign = '';
   $scope.newCost = {
-    'cost': null,
-    'category': null
-  };
-  $scope.newMoney = {
     'amount': null,
-    'desc': null
+    'category': null,
+    'date': null,
+    'by': null
+  };
+  $scope.newSalary = {
+    'type': null,
+    'value': null,
+    'by': null
   };
 
   $scope.categories = [
     'Räkningar', 'Övrigt', 'Bilkostnader', 'Kläder'
   ];
-
+  
   $scope.saveCost = function() {
-    // console.log('saving ' + $scope.newCost.cost + ' at ' + $scope.newCost.category);
+    $scope.newCost.date = moment().format('YYYY-MM-DD')
+    $scope.newCost.by = $scope.$storage.username;
+    $scope.datasetCosts.push($scope.newCost);
+    console.log(JSON.stringify($scope.newCost));
+    $scope.newCost = {
+      'category':null,
+      'amount':null,
+      'date':null,
+      'by':$scope.$storage.username
+    };
+    $scope.sumItUp();
+    // DO POSTING HERE TO API
   };
 
-  $scope.saveNewMoney = function() {
-    console.log('saving ' + $scope.newMoney.amount + ' at ' + $scope.newMoney.desc);
-    $scope.newMoney.amount = null;
-    $scope.newMoney.desc = null;
+  $scope.saveSalary = function() {
+    $scope.newSalary.date = moment().format('YYYY-MM-DD')
+    $scope.datasetSalary.push($scope.newSalary);
+    console.log(JSON.stringify($scope.newSalary));
+    $scope.newSalary = {
+      'type': null,
+      'value': null,
+      'by': null
+    };
+    $scope.sumItUp();
+    // DO POSTING HERE TO API
   };
 
   $scope.clearCost = function() {
-    // $scope.newCost.cost = null;
-    // $scope.newCost.category = null;
+    $scope.newCost = {
+      'category':null,
+      'amount':null,
+      'date':null,
+      'by':$scope.$storage.username
+    };
+  };
+  
+  $scope.clearSalary = function() {
+    $scope.newSalary = {
+      'type': null,
+      'value': null,
+      'by': null
+    };
   };
 
   $scope.loadCategories = function() {
@@ -70,8 +103,12 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav) {
         $scope.nav = 'partials/main.html';
         $mdSidenav('left').toggle();
         break;
-      case 'addmoney':
-        $scope.nav = 'partials/addmoney.html';
+      case 'settings':
+        $scope.nav = 'partials/settings.html';
+        $mdSidenav('left').toggle();
+        break;
+      case 'addsalary':
+        $scope.nav = 'partials/addsalary.html';
         $mdSidenav('left').toggle();
         break;
       case 'addcost':
@@ -106,61 +143,79 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav) {
     if (newValue != oldValue) {
       $scope.selected.month = '';
       console.log('year changed ' + $scope.selected.year);
-      $scope.loadMonthsAvailable();
+      $scope.fetchData();
     }
   });
 
-
-  $scope.loadMonthsAvailable = function() {
-    console.log('loading months');
-    $scope.monthsAvailable = [];
-    for (x in $scope.datasetCosts) {
-      $scope.monthsAvailable.push($scope.datasetCosts[x].month);
-    }
-  };
-
-  $scope.showdata = function() {
-    console.log('COSTS: ' + JSON.stringify($scope.datasetCosts));
-    console.log('SALARY: ' + JSON.stringify($scope.datasetSalary));
-  };
-
   // Calculations
   $scope.calculations = function() {
+    var nullIt = function() {
+      console.log('Nulling values');
+      // Reset the needed values so that we do not add on to them
+      $scope.yearsAvailable = [];
+      $scope.monthsAvailable = [];
+      $scope.datasetSalary = [];
+      $scope.datasetCosts = [];
+    };
+
+    var sortThrough = function() {
+      console.log('Running sort for ' + $scope.selected.year + ' / ' + $scope.selected.month);
+      // SALARY
+      // From salary, extract the current year and corresponding months data
+      angular.forEach($scope.salary, function(stage1, index) {
+        // Add Year to avail years
+        $scope.yearsAvailable.push(stage1.year);
+        // Add the selected year to the current dataset
+        if (stage1.year == $scope.selected.year) {
+          angular.forEach(stage1.months, function(stage3, index) {
+            $scope.monthsAvailable.push(stage3.month);
+            if (angular.lowercase(stage3.month) == angular.lowercase($scope.selected.month)) {
+              // Add to dataset
+              $scope.datasetSalary = stage3.data;
+              // console.log('DatasetSalary + ' + JSON.stringify(stage3.data));
+            }
+          });
+        }
+      });
+
+      // COSTS
+      angular.forEach($scope.costs, function(stage1, index) {
+        if (stage1.year == $scope.selected.year) {
+          angular.forEach(stage1.months, function(stage3, index) {
+            if (angular.lowercase(stage3.month) == angular.lowercase($scope.selected.month)) {
+              // Add to dataset
+              $scope.datasetCosts = stage3.data;
+              // console.log('DatasetCosts + ' + JSON.stringify(stage3.data));
+            }
+          });
+        }
+      });
+    };
+    sortThrough(function() {
+    },nullIt());
+  };
+
+  $scope.sumItUp = function() {
+    // Reset total values
     $scope.totalSalarySelectedMonth = 0;
     $scope.totalCostSelectedMonth = 0;
-    console.log($scope.selected.year);
-    $scope.yearsAvailable = [];
-    $scope.datasetSalary = [];
-    $scope.datasetCosts = [];
-    console.log('running calculations');
-    console.log($scope.salary);
-    for (x in $scope.salary) {
-      $scope.yearsAvailable.push($scope.salary[x].year);
-      // Use the current year as dataset, filter month later when picked in dropdown
-      if ($scope.salary[x].year == $scope.selected.year) {
-        $scope.datasetSalary = $scope.salary[x].months;
-      }
+    // SUM UP
+    console.log('summing up');
+    angular.forEach($scope.datasetSalary,function(x, index) {
+      $scope.totalSalarySelectedMonth += x.value;
+    });
+    
+    angular.forEach($scope.datasetCosts,function(y, index) {
+      $scope.totalCostSelectedMonth += y.amount;
+    });
+
+    $scope.plusminus = $scope.totalSalarySelectedMonth - $scope.totalCostSelectedMonth;
+    if ($scope.totalSalarySelectedMonth > $scope.totalCostSelectedMonth) {
+      $scope.plusminusSign = '+';
     }
-    for (x in $scope.costs) {
-      // Use the current year as dataset, filter month later when picked in dropdown
-      if ($scope.costs[x].year == $scope.selected.year) {
-        $scope.datasetCosts = $scope.costs[x].months;
-      }
+    else {
+      $scope.plusminusSign = '';
     }
-    // for (x in $scope.datasetSalary[0].data) {
-    //   $scope.totalSalarySelectedMonth += $scope.datasetSalary[0].data[x].value;
-    // }
-    // for (x in $scope.datasetCosts[0].data) {
-    //   $scope.totalCostSelectedMonth += $scope.datasetCosts[0].data[x].amount;
-    //   console.log('adding ' + $scope.datasetCosts[0].data[x].amount + ' to costs');
-    // }
-    // $scope.plusminus = $scope.totalSalarySelectedMonth - $scope.totalCostSelectedMonth;
-    // if ($scope.totalCostSelectedMonth > $scope.totalSalarySelectedMonth) {
-    //   $scope.plusminusSign = '-';
-    // }
-    // else
-    //   $scope.plusminusSign = '+';
-    $scope.loadMonthsAvailable();
   };
 
   $scope.fetchData = function() {
@@ -168,35 +223,22 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav) {
     $scope.totalCostSelectedMonth = 0;
     $scope.totalSalarySelectedMonth = 0;
 
-    function getCosts() {
-      costsPromise.promise
-      .then(function () {
-        $http.get('js/mockdata/costs.json').then(function(result) {
-          costsPromise.resolve(result.data);
-        });
+    $http.get('js/mockdata/costs.json').then(function(result) {
+      // console.log('costs get run');
+      $scope.costs = result.data;
+      $http.get('js/mockdata/salary.json').then(function(result) {
+        // console.log('salary get run');
+        $scope.salary = result.data;
+        
+        $scope.sumItUp(function() {
+        },$scope.calculations());
       });
-      return costsPromise.promise;
-    };
-
-    function getSalary() {
-      salaryPromise.promise
-      .then(function () {
-        $http.get('js/mockdata/salary.json').then(function(result) {
-          salaryPromise.resolve(result.data);
-        });
-      });
-      return salaryPromise.promise;
-    }
-
-    $scope.costs = getCosts();
-    $scope.salary = getSalary();
-
+    });
   };
   $scope.fetchData();
 });
 
-angular.module('StarterApp')
-.controller('charts', function ($scope) {
+app.controller('charts', function ($scope) {
   $scope.chartObject = {};
   $scope.chartObject.type = 'AreaChart';
   $scope.onions = [

@@ -1,15 +1,21 @@
 <div layout="column" layout-align="center center" style="padding:40px">
-  <form name="myNewCostForm">
-    <md-select placeholder="Välj kategori" ng-model="newCost.category" md-on-open="loadCategories()" style="min-width: 200px;" required>
-      <md-option ng-value="cat" ng-repeat="cat in categories">{{cat}}</md-option>
-    </md-select>
-    <md-input-container>
-      <label>Summa</label>
-      <input ng-model="newCost.cost" type="number" step=100 min=20 required>
-    </md-input-container>
-  </form>
-  <div layout="columns">
-    <md-button ng-click="clearCost()" class="md-raised md-warn" layout layout-align="center center">Rensa</md-button>
-    <md-button ng-click="saveCost()" ng-disabled="myNewCostForm.$invalid" class="md-raised md-primary" layout layout-align="center center">Spara</md-button>
+  <div ng-show="!$storage.username"> 
+    <center><ng-md-icon icon="warning" style="fill: red" size="40"></ng-md-icon></center>
+    <p>Gå till inställningar och ange ditt namn.</p>
+  </div>
+  <div ng-hide="!$storage.username">
+    <form name="myNewCostForm">
+      <md-select placeholder="Välj kategori" ng-model="newCost.category" md-on-open="loadCategories()" style="min-width: 200px;" required>
+        <md-option ng-value="cat" ng-repeat="cat in categories">{{cat}}</md-option>
+      </md-select>
+      <md-input-container>
+        <label>Summa</label>
+        <input ng-model="newCost.amount" type="number" step=100 min=20 required>
+      </md-input-container>
+    </form>
+    <div layout="columns">
+      <md-button ng-click="clearCost()" class="md-raised md-warn" layout layout-align="center center">Rensa</md-button>
+      <md-button ng-click="saveCost()" ng-disabled="myNewCostForm.$invalid" class="md-raised md-primary" layout layout-align="center center">Spara</md-button>
+    </div>
   </div>
 </div>

@@ -8,12 +8,11 @@
     </md-input-container>
     <md-input-container>
       <md-select placeholder="Månad" ng-model="selected.month" md-on-open="dummy()" style="min-width: 200px;" required>
-        <md-option ng-click="calculations()" ng-value="month" ng-repeat="month in monthsAvailable">{{month}}</md-option>
+        <md-option ng-click="fetchData()" ng-value="month" ng-repeat="month in monthsAvailable">{{month}}</md-option>
       </md-select>
     </md-input-container>
   </form>
 </div>
-<button ng-click="showdata()">Showdata</button>
 
 <md-content class="md-padding">
   <md-card>
@@ -22,7 +21,7 @@
         <h2 class="md-title">Totalt in:</h2>
         <h2 class="md-title" ng-bind="totalSalarySelectedMonth"></h2>
       </div>
-      <span ng-repeat="x in datasetSalary[0].data">
+      <span ng-repeat="x in datasetSalary">
         {{x.type}} {{x.value}}<br>
       </span>
     </md-card-content>

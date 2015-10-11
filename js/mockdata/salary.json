@@ -8,6 +8,12 @@
           {"type":"Skatt","value":2000,"by":"Michael"},
           {"type":"Lön","value":10000,"by":"Emelie"}
         ]
+      },
+      {
+        "month":"September",
+        "data": [
+          {"type":"Lön","value":8000,"by":"Michael"}
+        ]
       }
     ]
   },
@@ -19,6 +25,13 @@
         "data": [
           {"type":"Skatt","value":1000,"by":"Michael"},
           {"type":"Lön","value":3000,"by":"Emelie"}
+        ]
+      },
+      {
+        "month":"November",
+        "data": [
+          {"type":"Lön","value":9000,"by":"Michael"},
+          {"type":"Lön","value":2000,"by":"Emelie"}
         ]
       }
     ]

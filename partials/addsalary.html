@@ -1,0 +1,25 @@
+<div layout="column" layout-align="center center" style="padding:40px">
+  <div ng-show="!$storage.username">
+    <center><ng-md-icon icon="warning" style="fill: red" size="40"></ng-md-icon></center>
+    <p>Gå till inställningar och ange ditt namn.</p>
+  </div>
+  <div ng-hide="!$storage.username">
+    <form name="myNewMoneyForm">
+      <md-input-container>
+        <label>Beskrivning</label>
+        <input ng-model="newSalary.type" type="text" required>
+      </md-input-container>
+      <md-input-container>
+        <label>Summa</label>
+        <input ng-model="newSalary.value" type="number" step=1000 min=20 required>
+      </md-input-container>
+      <md-input-container>
+        <label>Av</label>
+        <input ng-model="newSalary.by" type="text" required>
+      </md-input-container>
+    </form>
+    <section layout="row" layout-sm="row" layout-align="center center" layout-wrap>
+      <md-button ng-click="saveSalary()" ng-disabled="myNewMoneyForm.$invalid" class="md-raised md-primary">Spara</md-button>
+    </section>
+  </div>
+</div>

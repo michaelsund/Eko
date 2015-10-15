@@ -1,0 +1,28 @@
+<div layout="column" layout-align="center center" style="padding:40px">
+  <center><h3>Lägg till kostnad</h3></center>
+  <div ng-show="!$storage.username"> 
+    <center><ng-md-icon icon="warning" style="fill: red" size="40"></ng-md-icon></center>
+    <p>Gå till inställningar och ange ditt namn.</p>
+  </div>
+  <div ng-hide="!$storage.username">
+    <form name="myNewCostForm">
+      <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+        <md-datepicker ng-model="selected.date" md-placeholder="Ange datum" style="padding-right: 20px"></md-datepicker>
+        <md-button ng-click="resetDate()" class="md-fab" aria-label="Dagens datum">
+            <ng-md-icon icon="history" fill="white"></ng-md-icon>
+        </md-button>
+      </section>
+      <md-input-container>
+        <label>Summa</label>
+        <input ng-model="newCost.amount" type="number" step=100 min=20 required>
+      </md-input-container>
+      <md-select placeholder="Välj kategori" ng-model="newCost.category" md-on-open="loadCategories()" style="min-width: 200px;" required>
+        <md-option ng-value="cat" ng-repeat="cat in categories">{{cat}}</md-option>
+      </md-select>
+    </form>
+    <div layout="columns">
+      <md-button ng-click="clearCost()" class="md-raised md-warn" layout layout-align="center center">Rensa</md-button>
+      <md-button ng-click="saveCost()" ng-disabled="myNewCostForm.$invalid" class="md-raised md-primary" layout layout-align="center center">Spara</md-button>
+    </div>
+  </div>
+</div>

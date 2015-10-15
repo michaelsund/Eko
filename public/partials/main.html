@@ -1,0 +1,43 @@
+<div layout="column" layout-align="center center">
+  <h2 ng-cloak class="currentMonth">{{selected.year}} / {{selected.month}}</h2>
+  <form name="myMonthForm">
+    <md-input-container>
+      <md-select placeholder="År" ng-model="selected.year" md-on-open="dummy()" style="min-width: 200px;" required>
+        <md-option ng-value="year" ng-repeat="year in yearsAvailable">{{year}}</md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container>
+      <md-select placeholder="Månad" ng-model="selected.month" md-on-open="dummy()" style="min-width: 200px;" required>
+        <md-option ng-click="updateDataset(month)" ng-value="month" ng-repeat="month in monthsAvailable">{{month}}</md-option>
+      </md-select>
+    </md-input-container>
+  </form>
+</div>
+
+<md-content class="md-padding">
+  <md-card>
+    <md-card-content>
+      <div layout="rows">
+        <h2 class="md-title">Totalt in:</h2>
+        <h2 class="md-title" ng-bind="totalSalarySelectedMonth"></h2>
+      </div>
+      <span ng-repeat="x in datasetSalary">
+        {{x.by}} - {{x.category}} {{x.value}}<br>
+      </span>
+    </md-card-content>
+  </md-card>
+</md-content>
+<md-content class="md-padding">
+  <md-card>
+    <md-card-content>
+      <div layout="rows">
+        <h2 class="md-title">Totalt ut:</h2>
+        <h2 class="md-title" ng-bind="totalCostSelectedMonth"></h2>
+      </div>
+      {{ plusminusSign }}<span ng-bind="plusminus"></span> denna månad
+      <section layout="row" layout-sm="row" layout-align="center center" layout-wrap>
+        <md-button class="md-raised md-primary" ng-click="doNav('details-view')">Lista månad</md-button>
+      </section>
+    </md-card-content>
+  </md-card>
+</md-content>

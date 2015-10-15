@@ -1,13 +1,12 @@
 <html lang="en" ng-app="StarterApp">
   <head>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
     <link rel="stylesheet" href="bower_components/angular-material-icons/angular-material-icons.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
     <link rel="stylesheet" href="css/main.css">
-
-    <meta name="viewport" content="initial-scale=1" />
   </head>
-  <body layout="column" ng-controller="AppCtrl">
+  <body layout="column" ng-cloak="" ng-controller="AppCtrl">
     <md-toolbar layout="row">
       <div class="md-toolbar-tools" ng-cloak>
         <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
@@ -20,21 +19,21 @@
         <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
           <md-button class="md-primary" ng-click="doNav('overview')">Översikt</md-button>
           <!--<md-button class="md-primary" ng-click="doNav('graph')">Graf</md-button>-->
-          <md-button class="md-primary" ng-click="doNav('details')">Lista månad</md-button>
-          <md-button class="md-primary" ng-click="doNav('addcost')">Lägg in kostnad</md-button>
-          <md-button class="md-primary" ng-click="doNav('addsalary')">Lägg in pengar</md-button>
-          <md-divider></md-divider>
+          <md-button class="md-primary" ng-click="doNav('details')">Lista kostnader</md-button>
+          <md-button class="md-primary" ng-click="doNav('addcost')">Lägg till kostnad</md-button>
+          <md-button class="md-primary" ng-click="doNav('addsalary')">Lägg till inkomst</md-button>
           <md-button class="md-primary" ng-click="doNav('settings')">Inställningar</md-button>
         </md-sidenav>
-        <div flex>
+        <md-content flex>
           <ng-include src="nav"/>
-        </div>
+        </md-content>
     </div>
 
     <script src="bower_components/angular/angular.min.js"></script>
+    <!--<script src="js/angular-locale_sv-se.js"></script>-->
     <script src="bower_components/angular-material-icons/angular-material-icons.min.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="bower_components/angular-material/angular-material.min.js"></script>
     <script src="bower_components/ngstorage/ngStorage.min.js"></script>
     <script src="bower_components/angular-google-chart/ng-google-chart.js"></script>

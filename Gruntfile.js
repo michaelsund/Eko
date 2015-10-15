@@ -4,16 +4,15 @@ module.exports = function(grunt) {
   grunt.initConfig({
     browserSync: {
       bsFiles: {
-        src: [ 'css//*.css',
-               'js/*.js',
+        src: [ 'public/css//*.css',
+               'public/js/*.js',
                '*.html',
-               'partials/*.html'
+               'public/partials/*.html'
              ]
       },
       options: {
-        server: {
-          baseDir: './'
-        }
+        notify: true,
+        proxy: "localhost:4000",
       }
     }
   });

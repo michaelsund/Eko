@@ -6,7 +6,7 @@ app.run(function(amMoment) {
   amMoment.changeLocale('sv');
 });
 
-app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage) {
+app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage, $mdDialog) {
   console.log('loaded main controller');
 
   // Vars
@@ -34,8 +34,11 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage)
     'by': null
   };
   $scope.newSalary = {
-    'category': null,
+    'year': moment($scope.selected.date).format('YYYY'),
+    'month': moment($scope.selected.date).format('MMMM'),
+    'date': $scope.selected.date,
     'value': null,
+    'category': null,
     'by': null
   };
 
@@ -49,7 +52,6 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage)
     $scope.newCost.date = $scope.selected.date;
     $scope.newCost.by = $scope.$storage.username;
     $http.put('api/cost', $scope.newCost).then(function(result) {
-      console.log(result);
       $scope.sumItUp();
       $scope.newCost = {
         'year': null,
@@ -62,19 +64,68 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage)
       $scope.fetchData();
     });
   };
+  
+  $scope.deleteCost = function(id) {
+    $http.delete('api/cost/'+id).then(function(result) {
+      $scope.fetchData();
+    });
+  };
+  
+  $scope.editCost = function(ev, x) {
+    var confirm = $mdDialog.confirm()
+          .title('Ta bort kostnad?')
+          .content('Vill du verkligen ta bort<br>'+ x.amount + ' - ' + x.category)
+          // .ariaLabel('Lucky day')
+          .targetEvent(ev)
+          .ok('Ja')
+          .cancel('Nej');
+    $mdDialog.show(confirm).then(function() {
+      // $scope.status = 'Kostnad borttagen.';
+      $scope.deleteCost(x._id);
+    }, function() {
+      // $scope.status = 'Kostnaden togs inte bort.';
+    });
+  };
+  
+  $scope.editSalary = function(ev, x) {
+    var confirm = $mdDialog.confirm()
+          .title('Bekräftelse')
+          .content('Vill du verkligen ta bort<br>'+ x.value + ' - ' + x.category)
+          // .ariaLabel('Lucky day')
+          .targetEvent(ev)
+          .ok('Ja')
+          .cancel('Nej');
+    $mdDialog.show(confirm).then(function() {
+      // $scope.status = 'Kostnad borttagen.';
+      $scope.deleteSalary(x._id);
+    }, function() {
+      // $scope.status = 'Kostnaden togs inte bort.';
+    });
+  };
+  
+  $scope.deleteSalary = function(id) {
+    $http.delete('api/salary/'+id).then(function(result) {
+      $scope.fetchData();
+    });
+  };
 
   $scope.saveSalary = function() {
-    $scope.newSalary.date = moment().format('YYYY-MM-DD')
-    $scope.datasetSalary.push($scope.newSalary);
-    $scope.newSalary = {
-      'year': null,
-      'month': null,
-      'date': null,
-      'category': null,
-      'value': null,
-      'by': null
-    };
-    $scope.sumItUp();
+    $scope.newSalary.year = moment($scope.selected.date).format('YYYY');
+    $scope.newSalary.month = moment($scope.selected.date).format('MMMM');
+    $scope.newSalary.date = $scope.selected.date;
+    $scope.newSalary.by = $scope.$storage.username;
+    $http.put('api/salary', $scope.newSalary).then(function(result) {
+      $scope.sumItUp();
+      $scope.newSalary = {
+        'year': null,
+        'month': null,
+        'date': $scope.selected.date,
+        'category': null,
+        'value': null,
+        'by':$scope.$storage.username
+      };
+      $scope.fetchData();
+    });
   };
 
   $scope.clearCost = function() {

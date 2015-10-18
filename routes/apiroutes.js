@@ -21,6 +21,7 @@ router.route('/salary'
   });
 }
 ).put(function(req, res) {
+  console.log(JSON.stringify(req.body));
     var s = new Salary({
       'year': req.body.year,
       'month': req.body.month,
@@ -44,6 +45,22 @@ router.route('/salary'
         });  
       }
     });
+});
+
+router.delete('/salary/:_id?', function(req, res){
+  Salary.findByIdAndRemove(req.params._id, function(err, doc) {
+    if (err || !doc) {
+      console.log(err);
+      res.status(400).send({
+        'success': false
+      });
+    }
+    else {
+      res.status(200).send({
+        'success': true
+      }); 
+    }
+  });
 });
 
 router.route('/cost'
@@ -83,6 +100,22 @@ router.route('/cost'
         });  
       }
     });
+});
+
+router.delete('/cost/:_id?', function(req, res){
+  Cost.findByIdAndRemove(req.params._id, function(err, doc) {
+    if (err || !doc) {
+      console.log(err);
+      res.status(400).send({
+        'success': false
+      });
+    }
+    else {
+      res.status(200).send({
+        'success': true
+      }); 
+    }
+  });
 });
 
 module.exports = router

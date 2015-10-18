@@ -14,7 +14,7 @@
       </section>
       <md-input-container>
         <label>Summa</label>
-        <input ng-model="newCost.amount" type="number" step=100 min=20 required>
+        <input ng-model="newCost.amount" type="number" required>
       </md-input-container>
       <md-select placeholder="Välj kategori" ng-model="newCost.category" md-on-open="loadCategories()" style="min-width: 200px;" required>
         <md-option ng-value="cat" ng-repeat="cat in categories">{{cat}}</md-option>

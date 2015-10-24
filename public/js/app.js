@@ -31,6 +31,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     'date': $scope.selected.date,
     'amount': null,
     'category': null,
+    'desc': null,
     'by': null
   };
   $scope.newSalary = {
@@ -43,7 +44,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
   };
 
   $scope.categories = [
-    'Räkningar', 'Övrigt', 'Bilkostnader', 'Kläder'
+    'Räkningar', 'Övrigt', 'Bilkostnader', 'Kläder', 'Lovis', 'Mat', 'Snask', 'Snus'
   ];
   
   $scope.saveCost = function() {
@@ -58,19 +59,20 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
         'month': null,
         'date': $scope.selected.date,
         'category': null,
+        'desc': null,
         'amount': null,
         'by':$scope.$storage.username
       };
       $scope.fetchData();
     });
   };
-  
+
   $scope.deleteCost = function(id) {
     $http.delete('api/cost/'+id).then(function(result) {
       $scope.fetchData();
     });
   };
-  
+
   $scope.editCost = function(ev, x) {
     var confirm = $mdDialog.confirm()
           .title('Ta bort kostnad?')
@@ -86,7 +88,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
       // $scope.status = 'Kostnaden togs inte bort.';
     });
   };
-  
+
   $scope.editSalary = function(ev, x) {
     var confirm = $mdDialog.confirm()
           .title('Bekräftelse')
@@ -102,7 +104,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
       // $scope.status = 'Kostnaden togs inte bort.';
     });
   };
-  
+
   $scope.deleteSalary = function(id) {
     $http.delete('api/salary/'+id).then(function(result) {
       $scope.fetchData();
@@ -131,11 +133,12 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
   $scope.clearCost = function() {
     $scope.newCost = {
       'category':null,
+      'desc':null,
       'amount':null,
       'by':$scope.$storage.username
     };
   };
-  
+
   $scope.clearSalary = function() {
     $scope.newSalary = {
       'category': null,
@@ -189,8 +192,8 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
         $mdSidenav('left').toggle();
         break;
     }
-
   };
+
   $scope.toggleSidenav = function(menuId) {
     $mdSidenav(menuId).toggle();
   };
@@ -204,7 +207,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
       $scope.nullAll();
     }
   });
-  
+
   $scope.nullAll = function() {
     $scope.datasetCosts = [];
     $scope.datasetSalary = [];
@@ -213,14 +216,14 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     $scope.totalCostSelectedMonth = 0;
     $scope.totalSalarySelectedMonth = 0;
   };
-  
+
   $scope.updateDataset = function(month) {
     $scope.selected.month = month;
     $scope.sumItUp(function () {
-      
+
     },$scope.pickDataset());
   };
-  
+
   $scope.resetDate = function() {
     $scope.selected.date = new Date();
   };
@@ -229,23 +232,24 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     $scope.yearsAvailable = [];
     $scope.monthsAvailable = [];
     // picking out available years and months, based on selceted year
-    angular.forEach($scope.salary, function(value, key) {
+    angular.forEach($scope.costs, function(value, key) {
       // Pick out each year
-      if ($scope.yearsAvailable.indexOf($scope.salary[key].year) < 0) {
-        $scope.yearsAvailable.push($scope.salary[key].year);
+      if ($scope.yearsAvailable.indexOf($scope.costs[key].year) < 0) {
+        $scope.yearsAvailable.push($scope.costs[key].year);
       }
       // Pick out each month for current year
-      if ($scope.salary[key].year == $scope.selected.year) {
-        if ($scope.monthsAvailable.indexOf($scope.salary[key].month) < 0) {
-          $scope.monthsAvailable.push($scope.salary[key].month);
+      if ($scope.costs[key].year == $scope.selected.year) {
+        if ($scope.monthsAvailable.indexOf($scope.costs[key].month) < 0) {
+          $scope.monthsAvailable.push($scope.costs[key].month);
         }
       }
     });
   };
-  
+
   $scope.pickDataset = function() {
     // reset datasets
     $scope.datasetCosts = [];
+    $scope.categoryChart = {};
     $scope.datasetSalary = [];
     // pick salary dataset
     angular.forEach($scope.salary, function(value, key) {
@@ -256,10 +260,16 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     angular.forEach($scope.costs, function(value, key) {
       if ($scope.costs[key].year == $scope.selected.year && angular.lowercase($scope.costs[key].month) === angular.lowercase($scope.selected.month)) {
         $scope.datasetCosts.push($scope.costs[key]);
+        if ($scope.categoryChart[value.category]) {
+          $scope.categoryChart[value.category] += value.amount;
+        }
+        else {
+          $scope.categoryChart[value.category] = value.amount;
+        }
       }
     });
   };
-  
+
   $scope.sumItUp = function() {
     // reset calculations
     $scope.totalCostSelectedMonth = 0;
@@ -277,8 +287,31 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     else {
       $scope.plusminusSign = '+';
     }
+    // main chart final sorted
+    $scope.chartDataCategory = [];
+    for (x in $scope.categoryChart) {
+      $scope.chartDataCategory.push({'c':[{'v':x},{'v':$scope.categoryChart[x]}]})
+    }
+    // piechart month categories
+    $scope.chartObjectMonth = {};
+    $scope.chartObjectMonth.type = "PieChart";
+    $scope.chartObjectMonth.data = {"cols": [
+        {id: "t", label: "Kategori", type: "string"},
+        {id: "s", label: "Utgift", type: "number"}
+    ], "rows": [
+        {c: [
+            {v: "Mushrooms"},
+            {v: 3},
+        ]}
+    ]};
+    $scope.chartObjectMonth.options = {
+      'legend': { position: 'top' },
+      'is3D': false,
+    };
+    //main category chart for year/month
+    $scope.chartObjectMonth.data.rows = $scope.chartDataCategory;
   };
-  
+
   $scope.fetchData = function() {
     $scope.totalCostSelectedMonth = 0;
     $scope.totalSalarySelectedMonth = 0;
@@ -294,35 +327,51 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     });
   };
   $scope.fetchData();
+
+  $scope.test = function() {
+    console.log($scope.monthsAvailable);
+    console.log($scope.chartData);
+  };
+
 });
 
-app.controller('charts', function ($scope) {
+app.controller('compareCharts', function ($scope, $http) {
+  console.log('running compareCharts');
+  // get data for the selected months
+  $http.post('api/monthschart', {'year':$scope.selected.year,'months':$scope.monthsAvailable}).then(function(result) {
+    // first array element is the costs object, second is salary object, loop through and pick out each
+    // month from both objects and put into a dataobject for that month
+    // Note: the two objects recieved will always have the same months! although not sorted if mismatch in query
+    $scope.chartData = [];
+    for (x in result.data[0]) {
+      $scope.chartData.push({'c':[{'v':x},{'v':result.data[1][x]},{'v':'#2857bd'},{'v':result.data[0][x]},{'v':'#e2431e'}]})
+    }
+    $scope.chartObject.data.rows = $scope.chartData;
+  });
+
   $scope.chartObject = {};
-  $scope.chartObject.category = 'AreaChart';
-  $scope.onions = [
-      {v: 'Onions'},
-      {v: 3},
-  ];
+  $scope.chartObject.type = "ColumnChart";
+
+  // $scope.data1 = [
+  //     {v: 'Oktober'},
+  //     {v: 100},
+  //     {v: '#2857bd'},
+  //     {v: 40},
+  //     {v: '#e2431e'},
+  // ];
+
   $scope.chartObject.data = {'cols': [
-      {id: 't', label: 'Topping', category: 'string'},
-      {id: 's', label: 'Slices', category: 'number'}
+      {id: 'test1', label: 'Månad', type: 'string'},
+      {id: 'test3', label: 'Inkomster', type: 'number'},
+      {role: 'style', type: 'string'},
+      {id: 'test5', label: 'Utgifter', type: 'number'},
+      {role: 'style', type: 'string'}
   ], 'rows': [
-      {c: [
-          {v: 'Mushrooms'},
-          {v: 3},
-      ]},
-      {c: $scope.onions},
-      {c: [
-          {v: 'Olives'},
-          {v: 31}
-      ]},
-      {c: [
-          {v: 'Zucchini'},
-          {v: 1},
-      ]},
-      {c: [
-          {v: 'Pepperoni'},
-          {v: 2},
-      ]}
+        // {c: $scope.data1},
   ]};
+
+  $scope.chartObject.options = {
+      'title': '',
+      'legend': { position: 'bottom' }
+  };
 });

@@ -5,6 +5,7 @@ var schema = new mongoose.Schema({
 	month: {type: String},
 	date: {type: Date},
 	category: {type: String},
+	desc: {type: String},
 	amount: {type: Number},
 	by: {type: String}
 });

@@ -13,13 +13,17 @@
         </md-button>
       </section>
       <md-input-container>
-        <label>Summa</label>
-        <input ng-model="newCost.amount" type="number" required>
-      </md-input-container>
+        <label>Notering</label>
+        <input ng-model="newCost.desc" type="text">
+      </md-input-container>    
       <md-select placeholder="Välj kategori" ng-model="newCost.category" md-on-open="loadCategories()" style="min-width: 200px;" required>
         <md-option ng-value="cat" ng-repeat="cat in categories">{{cat}}</md-option>
       </md-select>
     </form>
+    <md-input-container>
+      <label>Summa</label>
+      <input ng-model="newCost.amount" type="number" required>
+    </md-input-container>
     <div layout="columns">
       <md-button ng-click="clearCost()" class="md-raised md-warn" layout layout-align="center center">Rensa</md-button>
       <md-button ng-click="saveCost()" ng-disabled="myNewCostForm.$invalid" class="md-raised md-primary" layout layout-align="center center">Spara</md-button>

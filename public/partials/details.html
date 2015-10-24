@@ -25,7 +25,8 @@
             <div class="md-list-item-text">
               <div flex layout="row">
                 <md-content flex layout="column">
-                  <h3>{{item.amount}} {{item.category}}</h3>
+                  <h3>{{item.category}} <b>{{item.amount}}</b></h3>
+                  <h3 class="md-headline" style="color: #2D45A3">{{item.desc}}</h3>
                   <p>{{item.by}} {{item.date | date : 'yyyy-MM-dd'}}</p>
                 </md-content>
                 <md-button aria-label="Radera" ng-click="editCost($event, item)" class="md-fab md-mini md-raised" layout-align="right right">

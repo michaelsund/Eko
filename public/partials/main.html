@@ -21,22 +21,12 @@
         <h2 class="md-title">Totalt in:</h2>
         <h2 class="md-title" ng-bind="totalSalarySelectedMonth"></h2>
       </div>
-      <!--<span ng-repeat="x in datasetSalary">
-        <div flex layout="row">
-          <md-content flex layout="column">
-            {{x.by}} - {{x.category}} {{x.value}}
-            <md-button aria-label="Radera" ng-click="editSalary($event, x)" class="md-fab md-mini md-raised" layout-align="right right">
-              <ng-md-icon icon="mode_edit" fill="black"></ng-md-icon>
-            </md-button>
-          </md-content>
-        </div>
-      </span>-->
       <md-list>
           <md-list-item class="md-3-line" ng-repeat="x in datasetSalary">
             <div class="md-list-item-text">
               <div flex layout="row">
                 <md-content flex layout="column">
-                  <h3>{{x.value}} {{x.category}}</h3>
+                  <h3>{{x.category}} <b>{{x.value}}</b></h3>
                   <p>{{x.by}} {{x.date | date : 'yyyy-MM-dd'}}</p>
                 </md-content>
                 <md-button aria-label="Radera" ng-click="editSalary($event, x)" class="md-fab md-mini md-raised" layout-align="right right">
@@ -65,3 +55,4 @@
     </md-card-content>
   </md-card>
 </md-content>
+<div google-chart chart="chartObjectMonth" style="height:20em; width:100%;"></div

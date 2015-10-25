@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
     <link rel="stylesheet" href="css/main.css">
   </head>
-  <body ng-controller="AppCtrl">
-    <md-toolbar layout="row" layout-align="end center" flex>
+  <body layout="column" ng-controller="AppCtrl">
+    <md-toolbar layout="row">      
       <div class="md-toolbar-tools">
         <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
           <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
@@ -17,7 +17,7 @@
       </div>
       <md-button ng-click="fetchData()" aria-label="Refresh"><ng-md-icon icon="refresh" style="fill: white" size="24"></ng-md-icon></md-button>      
     </md-toolbar>
-    <div ng-cloak layout="row" flex>
+    <div layout="row" flex>
         <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
           <md-button class="md-primary" ng-click="doNav('overview')">Översikt</md-button>
           <md-button class="md-primary" ng-click="doNav('graph')">Jämnför</md-button>

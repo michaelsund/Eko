@@ -22,7 +22,7 @@
         <h2 class="md-title" ng-bind="totalSalarySelectedMonth"></h2>
       </div>
       <md-list>
-          <md-list-item class="md-3-line" ng-repeat="x in datasetSalary">
+          <md-list-item class="md-3-line" ng-repeat="x in datasetSalary | orderBy: '-date'">
             <div class="md-list-item-text">
               <div flex layout="row">
                 <md-content flex layout="column">

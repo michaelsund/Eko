@@ -44,7 +44,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
   };
 
   $scope.categories = [
-    'Räkningar', 'Övrigt', 'Bilkostnader', 'Kläder', 'Lovis', 'Mat', 'Snask', 'Snus'
+     'Snask', 'Snus', 'Övrigt', 'Mat', 'Bilkostnader', 'Kläder', 'Lovis','Räkningar'
   ];
   
   $scope.saveCost = function() {

@@ -1,0 +1,58 @@
+<html lang="en" ng-app="LoginApp">
+  <head>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="bower_components/angular-material-icons/angular-material-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body ng-controller="LoginCtrl" style="background:#f1f8e9;" ng-cloak>
+    <div layout="row">
+      <div flex hide-md hide-sm>
+      </div>
+      <div class="logincard" flex>
+        <md-content class="md-padding" style="background:#f1f8e9;">
+          <md-card>
+            <md-card-content>
+              <h2 class="md-title">Eko 0_o</h2>
+              <md-divider></md-divider>
+              <p ng-show="!loginerror && !redirecting">
+                <i>Ange lösenordet för att fortsätta</i>
+              </p>
+              <p ng-show="loginerror && !redirecting">
+                <i>{{errorMessage}}</i>
+              </p>
+              <p ng-show="redirecting">
+                <i>Loggar in</i>
+              </p>
+              <div ng-show="redirecting" layout="row" layout-sm="column" layout-align="space-around">
+                <center><md-progress-circular class="md-accent md-hue-1" md-diameter="60"></md-progress-circular></center>
+              </div>
+            </md-card-content>
+            <div layout="row" class="md-padding" layout-align="center center">
+                <md-input-container>
+                  <label>Lösenord</label>
+                  <input ng-model="password" type="password">
+                </md-input-container>
+                <md-button class="md-primary md-raised" ng-click="login()">Ok</md-button>
+            </div>
+          </md-card>
+        </md-content>
+      </div>
+      <div flex hide-md hide-sm>
+      </div>
+    </div>
+    <div class="loginfooter">
+      <a href="https://github.com/michaelsund/Eko"><md-tooltip md-direction="top">Gogo github</md-tooltip><ng-md-icon aria-label="Visit github" icon="github-circle" style="fill: black" size="24"></ng-md-icon></a>
+      <a href="http://www.osund.com"><md-tooltip md-direction="top">Visit my website!</md-tooltip><ng-md-icon aria-label="Visit homepage" icon="public" style="fill: black" size="24"></ng-md-icon></a>
+    </div>
+		<script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-material-icons/angular-material-icons.min.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.min.js"></script>
+		<script src="js/loginapp.js"></script>
+	</body>
+</html>

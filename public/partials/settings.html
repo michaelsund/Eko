@@ -1,9 +1,40 @@
-<div layout="column" layout-align="center center" style="padding: 40px">
-  <h3>Inställningar</h3>
-	<form name="mySettingsForm">
-    <md-input-container>
-      <label>Namn</label>
-      <input ng-model="$storage.username" type="text" required>
-    </md-input-container>
-  </form>
-</div>
+<md-grid-list
+  md-cols-sm="1"
+  md-cols-md="2"
+  md-cols-gt-md="6"
+  md-row-height-gt-md="1:1"
+  md-row-height="4:1"
+  md-gutter="12px" md-gutter-gt-sm="8px">
+  <md-grid-tile class="green"
+      md-rowspan="1" md-rowspan-sm="2" md-colspan="2" md-colspan-sm="1">
+    <form name="mySettingsForm">
+      <md-input-container>
+        <label>Namn</label>
+        <input ng-model="$storage.username" type="text" required>
+      </md-input-container>
+    </form>      
+  </md-grid-tile>
+  <md-grid-tile class="grey"
+      md-rowspan="1" md-rowspan-sm="2" md-colspan="2" md-colspan-sm="1">
+    <form name="myMonthForm" class="dateSelectCont">
+      <center>
+        <md-input-container>
+          <md-select placeholder="År" ng-model="selected.year" md-on-open="dummy()" style="min-width: 200px;" required>
+            <md-option ng-value="year" ng-repeat="year in yearsAvailable">{{year}}</md-option>
+          </md-select>
+        </md-input-container>
+      </center>
+      <center>
+        <md-input-container>
+          <md-select placeholder="Månad" ng-model="selected.month" md-on-open="dummy()" style="min-width: 200px;" required>
+            <md-option ng-click="updateDataset(month)" ng-value="month" ng-repeat="month in monthsAvailable">{{month}}</md-option>
+          </md-select>
+        </md-input-container>
+      </center>
+    </form>
+  </md-grid-tile>
+  <md-grid-tile class="red"
+      md-rowspan="1" md-rowspan-sm="2" md-colspan="2" md-colspan-sm="1">
+    <md-button aria-label="Glöm lösenordet" ng-click="removeToken()" class="md-raised" layout-align="center centert">Logga ut</md-button>
+  </md-grid-tile>
+</md-grid-list>

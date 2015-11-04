@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.11.3
+ * v1.0.0-rc2-master-5004a2a
  */
 goog.provide('ng.material.components.datepicker');
 goog.require('ng.material.components.icon');
@@ -1178,7 +1178,7 @@ goog.require('ng.material.core');
               '</md-calendar>' +
             '</div>' +
           '</div>',
-      require: ['ngModel', 'mdDatepicker'],
+      require: ['ngModel', 'mdDatepicker', '?^mdInputContainer'],
       scope: {
         minDate: '=mdMinDate',
         maxDate: '=mdMaxDate',
@@ -1190,6 +1190,11 @@ goog.require('ng.material.core');
       link: function(scope, element, attr, controllers) {
         var ngModelCtrl = controllers[0];
         var mdDatePickerCtrl = controllers[1];
+
+        var mdInputContainer = controllers[2];
+        if (mdInputContainer) {
+          throw Error('md-datepicker should not be placed inside md-input-container.');
+        }
 
         mdDatePickerCtrl.configureNgModel(ngModelCtrl);
       }
@@ -1407,7 +1412,7 @@ goog.require('ng.material.core');
       // the directive's isolate scope.
       var scope = this.$mdUtil.validateScope(this.$element) ? this.$element.scope() : null;
 
-      if ( scope ) {
+      if (scope) {
         scope.$watch(this.$attrs['ngDisabled'], function(isDisabled) {
           self.setDisabled(isDisabled);
         });
@@ -1438,11 +1443,11 @@ goog.require('ng.material.core');
   DatePickerCtrl.prototype.setErrorFlags = function() {
     if (this.dateUtil.isValidDate(this.date)) {
       if (this.dateUtil.isValidDate(this.minDate)) {
-        this.ngModelCtrl.$error['mindate'] = this.date < this.minDate;
+        this.ngModelCtrl.$setValidity('mindate', this.date >= this.minDate);
       }
 
       if (this.dateUtil.isValidDate(this.maxDate)) {
-        this.ngModelCtrl.$error['maxdate'] = this.date > this.maxDate;
+        this.ngModelCtrl.$setValidity('maxdate', this.date <= this.maxDate);
       }
     }
   };

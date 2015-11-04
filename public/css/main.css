@@ -1,3 +1,39 @@
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+body {
+	/*font-family: Helvetica;
+  -webkit-font-smoothing: antialiased;*/
+}
+
+.pad-up {
+  padding-top: 15px;
+}
+
+.loginfooter {
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  position: fixed;
+  left: 0;
+  height: 20px;
+  width: 100%;
+}
+
+.dateSelectCont {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.logincard {
+  padding-top: 100px;
+}
+
+p.uppercase {
+    text-transform: uppercase;
+}
+
 .md-toolbar-tools h1 {
   font-size: inherit;
   font-weight: inherit;
@@ -7,3 +43,23 @@
 .currentMonth {
   text-transform:capitalize;
 }
+
+md-grid-list {
+  margin: 8px;
+}
+md-grid-tile {
+  transition: all 400ms ease-out 50ms;
+}
+
+.grey {
+  background: #f5f5f5; }
+.green {
+  background: #b9f6ca; }
+.yellow {
+  background: #ffff8d; }
+.blue {
+  background: #84ffff; }
+.purple {
+  background: #b388ff; }
+.red {
+  background: #ff8a80; }

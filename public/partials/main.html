@@ -1,26 +1,31 @@
-<div layout="column" layout-align="center center">
-  <h2 ng-cloak class="currentMonth">{{selected.year}} / {{selected.month}}</h2>
-  <form name="myMonthForm">
-    <md-input-container>
-      <md-select placeholder="År" ng-model="selected.year" md-on-open="dummy()" style="min-width: 200px;" required>
-        <md-option ng-value="year" ng-repeat="year in yearsAvailable">{{year}}</md-option>
-      </md-select>
-    </md-input-container>
-    <md-input-container>
-      <md-select placeholder="Månad" ng-model="selected.month" md-on-open="dummy()" style="min-width: 200px;" required>
-        <md-option ng-click="updateDataset(month)" ng-value="month" ng-repeat="month in monthsAvailable">{{month}}</md-option>
-      </md-select>
-    </md-input-container>
-  </form>
+<div class="md-padding">
+  <md-card>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+          <p class="uppercase md-body-2">{{selected.year}} / {{selected.month}}</p>
+        </div>
+      </md-toolbar>
+    <md-card-content>
+      <div layout="row">
+        <p class="md-subhead">Inkomster: {{totalSalarySelectedMonth}} kr</p>
+      </div>
+      <div layout="row">
+        <p class="md-subhead">Utgifter: {{totalCostSelectedMonth}} kr</p>
+      </div>
+      <md-divider></md-divider>
+      <div class="pad-up">
+        <i>{{ plusminusSign }} {{plusminus}} kr denna månad.</i>
+      </div>
+    </md-card-content>
+  </md-card>
 </div>
 
-<md-content class="md-padding">
+<div google-chart chart="chartObjectMonth" style="height:20em; width:100%;"></div>
+
+<div class="md-padding">
   <md-card>
     <md-card-content>
-      <div layout="rows">
-        <h2 class="md-title">Totalt in:</h2>
-        <h2 class="md-title" ng-bind="totalSalarySelectedMonth"></h2>
-      </div>
+      <i>Inkomster denna månad</i>
       <md-list>
           <md-list-item class="md-3-line" ng-repeat="x in datasetSalary | orderBy: '-date'">
             <div class="md-list-item-text">
@@ -29,30 +34,13 @@
                   <h3>{{x.category}} <b>{{x.value}}</b></h3>
                   <p>{{x.by}} {{x.date | date : 'yyyy-MM-dd'}}</p>
                 </md-content>
-                <md-button aria-label="Radera" ng-click="editSalary($event, x)" class="md-fab md-mini md-raised" layout-align="right right">
-                  <ng-md-icon icon="mode_edit" fill="black"></ng-md-icon>
+                <md-button aria-label="Radera" ng-click="editSalary($event, x)" class="md-fab md-mini md-warn md-raised" layout-align="right right">
+                  <ng-md-icon icon="clear" fill="white"></ng-md-icon>
                 </md-button>
               </div>
             </div>
-            <!--<md-divider ng-if="!$last"></md-divider>-->
           </md-list-item>
         </md-list>
     </md-card-content>
   </md-card>
-</md-content>
-<md-content class="md-padding">
-  <md-card>
-    <md-card-content>
-      <div layout="rows">
-        <h2 class="md-title">Totalt ut:</h2>
-        <h2 class="md-title" ng-bind="totalCostSelectedMonth"></h2>
-      </div>
-      {{ plusminusSign }}<span ng-bind="plusminus"></span> denna månad
-      <br><br>
-      <section layout="row" layout-sm="row" layout-align="center center" layout-wrap>
-        <md-button class="md-raised md-primary" ng-click="doNav('details-view')">Visa kostnader</md-button>
-      </section>
-    </md-card-content>
-  </md-card>
-</md-content>
-<div google-chart chart="chartObjectMonth" style="height:20em; width:100%;"></div
+</div>

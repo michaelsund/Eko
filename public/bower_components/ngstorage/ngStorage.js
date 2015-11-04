@@ -12,8 +12,8 @@
 }(this , function (angular) {
     'use strict';
 
-    // RequireJS does not pass in Angular to us (will be undefined).
-    // Fallback to window which should mostly be there.
+    // In cases where Angular does not get passed or angular is a truthy value
+    // but misses .module we can fall back to using window.
     angular = (angular && angular.module ) ? angular : window.angular;
 
     /**
@@ -136,7 +136,7 @@
                     $storage = {
                         $default: function(items) {
                             for (var k in items) {
-                                angular.isDefined($storage[k]) || ($storage[k] = items[k]);
+                                angular.isDefined($storage[k]) || ($storage[k] = angular.copy(items[k]) );
                             }
 
                             $storage.$sync();
@@ -156,44 +156,36 @@
                             }
                         },
                         $apply: function() {
-                            var temp$storage;
 
                             _debounce = null;
 
-                            if (!angular.equals($storage, _last$storage)) {
-                                temp$storage = angular.copy(_last$storage);
-                                angular.forEach($storage, function(v, k) {
-                                    if (angular.isDefined(v) && '$' !== k[0]) {
-                                        webStorage.setItem(storageKeyPrefix + k, serializer(v))
-                                        delete temp$storage[k];
-                                    }
-                                });
-
-                                for (var k in temp$storage) {
-                                    webStorage.removeItem(storageKeyPrefix + k);
+                            angular.forEach($storage, function(v, k) {
+                                if (angular.isDefined(v) && '$' !== k[0]) {
+                                    webStorage.setItem(storageKeyPrefix + k, serializer(v));
                                 }
+                            });
 
-                                _last$storage = angular.copy($storage);
+                            var actualKeys = Object.keys($storage);
+                            var currentKeys = Object.keys(webStorage);
+                            for (var i in currentKeys) {
+                                if (actualKeys.indexOf(currentKeys[i]) < 0) {
+                                    webStorage.removeItem(storageKeyPrefix + currentKeys[i]);
+                                }
                             }
                         },
                     },
-                    _last$storage,
                     _debounce;
 
                 $storage.$sync();
 
-                _last$storage = angular.copy($storage);
-
                 $rootScope.$watch(function() {
-                    _debounce || (_debounce = $timeout($storage.$apply, 100, false));
+                    _debounce || (_debounce = $timeout($storage.$apply, 500, false));
                 });
 
                 // #6: Use `$window.addEventListener` instead of `angular.element` to avoid the jQuery-specific `event.originalEvent`
                 $window.addEventListener && $window.addEventListener('storage', function(event) {
                     if (storageKeyPrefix === event.key.slice(0, prefixLength)) {
                         event.newValue ? $storage[event.key.slice(prefixLength)] = deserializer(event.newValue) : delete $storage[event.key.slice(prefixLength)];
-
-                        _last$storage = angular.copy($storage);
 
                         $rootScope.$apply();
                     }
@@ -204,8 +196,8 @@
                 });
 
                 return $storage;
-            }
-        ];
+              }
+          ];
       };
     }
 

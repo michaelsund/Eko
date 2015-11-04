@@ -1,6 +1,35 @@
 var moment = require('moment');
 var express = require('express');
 var router = express.Router();
+var jwt = require('jsonwebtoken');
+var config = require('../config.json');
+
+
+// Token middleware
+router.use(function(req, res, next) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if (token) {
+    jwt.verify(token, config.tokensecret, function(err, decoded) {
+      console.log(err + ' ' + decoded);
+      if (err) { 
+        res.status(200).send({ 
+          success: false, 
+          message: 'Error using token' 
+        });
+      }
+      else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  }
+  else {
+    return res.status(200).send({ 
+        success: false, 
+        message: 'No token provided.' 
+    });
+  }
+});
 
 // ----------------------------------------------------------
 // Models
@@ -9,6 +38,8 @@ var Salary = require('../models/salary-model').Salary
 var Cost = require('../models/cost-model').Cost
 var async = require('async');
 
+
+// Routes
 router.route('/salary'
 ).get(function (req, res) {
   Salary.find({}, function(err, docs) {

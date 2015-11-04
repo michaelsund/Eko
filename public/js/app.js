@@ -6,11 +6,12 @@ app.run(function(amMoment) {
   amMoment.changeLocale('sv');
 });
 
-app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage, $mdDialog) {
+app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage, $mdDialog, $window) {
   console.log('loaded main controller');
 
   // Vars
   $scope.$storage = $localStorage;
+  $http.defaults.headers.common['x-access-token'] = $scope.$storage.token;
   $scope.costs = 0;
   $scope.salary = 0;
   $scope.selected = {
@@ -18,6 +19,8 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     'year': moment().format('YYYY'),
     'date': new Date()
   };
+  $scope.sortBy = {'sv': 'Datum', 'real': '-date'};
+  $scope.sorting = [{'sv': 'Datum', 'real': '-date'}, {'sv': 'Belopp', 'real': '-amount'}];
   $scope.initializing = true;
   $scope.datasetSalary = [];
   $scope.datasetCosts = [];
@@ -44,9 +47,26 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
   };
 
   $scope.categories = [
-     'Snask', 'Snus', 'Övrigt', 'Mat', 'Bilkostnader', 'Kläder', 'Lovis','Räkningar'
+    'Räkningar', 'Mat', 'Snus', 'Snask', 'Övrigt', 'Bilkostnader', 'Lovis', 'Kläder'
   ];
+
+  // Standalone set sort to saved value if exists
+  if ($scope.$storage.sortby) {
+    $scope.sortBy = $scope.$storage.sortby;
+  }
   
+  $scope.removeToken = function() {
+    delete $scope.$storage.token;
+    delete $http.defaults.headers.common['x-access-token'];
+    $window.location='/';
+  };
+
+  $scope.saveSort = function(sortObj) {
+    console.log('saving: ' + JSON.stringify(sortObj));
+    $scope.$storage.sortby = sortObj;
+    $scope.sortBy = sortObj;
+  };
+
   $scope.saveCost = function() {
     $scope.newCost.year = moment($scope.selected.date).format('YYYY');
     $scope.newCost.month = moment($scope.selected.date).format('MMMM');
@@ -158,10 +178,12 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     switch (partial) {
       case null:
         $scope.nav = 'partials/main.html';
+        $scope.fetchData();
         $mdSidenav('left').toggle();
         break;
       case 'overview':
         $scope.nav = 'partials/main.html';
+        $scope.fetchData();
         $mdSidenav('left').toggle();
         break;
       case 'settings':
@@ -189,6 +211,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
         break;
       default:
         $scope.nav = 'partials/main.html';
+        $scope.fetchData();
         $mdSidenav('left').toggle();
         break;
     }
@@ -315,10 +338,12 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
   $scope.fetchData = function() {
     $scope.totalCostSelectedMonth = 0;
     $scope.totalSalarySelectedMonth = 0;
-
+    
     $http.get('api/cost').then(function(result) {
+      checkTokenExpired(result);
       $scope.costs = result.data;
       $http.get('api/salary').then(function(result) {
+        checkTokenExpired(result);
         $scope.salary = result.data;
         $scope.pickDataset(function() {
         },$scope.sortData());
@@ -327,6 +352,15 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     });
   };
   $scope.fetchData();
+
+  function checkTokenExpired(result) {
+    if (result.data.success === false) {
+      console.log('token timed out');
+      delete $scope.$storage.token;
+      delete $http.defaults.headers.common['x-access-token'];
+      $window.location='/';
+    }
+  };
 
   $scope.test = function() {
     console.log($scope.monthsAvailable);

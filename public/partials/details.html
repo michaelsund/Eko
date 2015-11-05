@@ -22,7 +22,7 @@
     <md-list ng-repeat="item in datasetCosts | orderBy: sortBy.real">
       <md-list-item class="md-3-line">
         <div class="md-list-item-text">
-          <h3>{{item.category}}</h3>
+            <h3>{{item.category}} <b>{{item.desc}}</b></h3>
           <h4>{{item.amount}}</h4>
           <p>{{item.by}} {{item.date | date : 'yyyy-MM-dd'}}</p>
         </div>

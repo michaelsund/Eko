@@ -11,6 +11,15 @@ body {
   padding-top: 15px;
 }
 
+.loginlogo {
+  width: 100px;
+  padding-bottom: 15px;
+}
+
+.barlogo {
+  width: 50px;
+}
+
 .loginfooter {
   font-size: 12px;
   color: #000;

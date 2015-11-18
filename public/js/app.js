@@ -6,6 +6,12 @@ app.run(function(amMoment) {
   amMoment.changeLocale('sv');
 });
 
+app.config(function($mdThemingProvider) {
+  $mdThemingProvider.theme('default')
+    .primaryPalette('green')
+    .accentPalette('orange');
+});
+
 app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage, $mdDialog, $window) {
   console.log('loaded main controller');
 

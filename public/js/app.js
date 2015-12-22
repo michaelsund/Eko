@@ -8,12 +8,11 @@ app.run(function(amMoment) {
 
 app.config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
-    .primaryPalette('green')
-    .accentPalette('orange');
+    .primaryPalette('indigo')
+    .accentPalette('red');
 });
 
 app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage, $mdDialog, $window) {
-  console.log('loaded main controller');
 
   // Vars
   $scope.$storage = $localStorage;
@@ -51,16 +50,19 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     'category': null,
     'by': null
   };
+  $scope.newCategory = {
+    name: ''
+  };
 
   $scope.categories = [
-    'Räkningar', 'Mat', 'Snus', 'Snask', 'Övrigt', 'Bilkostnader', 'Lovis', 'Kläder'
+    // 'Räkningar', 'Mat', 'Snus', 'Snask', 'Övrigt', 'Bilkostnader', 'Lovis', 'Kläder'
   ];
 
   // Standalone set sort to saved value if exists
   if ($scope.$storage.sortby) {
     $scope.sortBy = $scope.$storage.sortby;
   }
-  
+
   $scope.removeToken = function() {
     delete $scope.$storage.token;
     delete $http.defaults.headers.common['x-access-token'];
@@ -103,7 +105,6 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     var confirm = $mdDialog.confirm()
           .title('Ta bort kostnad?')
           .content('Vill du verkligen ta bort<br>'+ x.amount + ' - ' + x.category)
-          // .ariaLabel('Lucky day')
           .targetEvent(ev)
           .ok('Ja')
           .cancel('Nej');
@@ -119,7 +120,6 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     var confirm = $mdDialog.confirm()
           .title('Bekräftelse')
           .content('Vill du verkligen ta bort<br>'+ x.value + ' - ' + x.category)
-          // .ariaLabel('Lucky day')
           .targetEvent(ev)
           .ok('Ja')
           .cancel('Nej');
@@ -173,8 +173,40 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
     };
   };
 
-  $scope.loadCategories = function() {
+  $scope.addCategory = function() {
+    $http.put('api/category', {name: $scope.newCategory.name}).then(function(result) {
+      if (result.data.success) {
+        $scope.fetchData();
+        $scope.newCategory.name = '';
+      }
+      else {
+        //todo
+      }
+    });
   };
+
+  $scope.delCategory = function(ev, name) {
+    var confirm = $mdDialog.confirm()
+          .title('Ta bort kategori?')
+          .content('Vill du verkligen ta bort ' + name)
+          .targetEvent(ev)
+          .ok('Ja')
+          .cancel('Nej');
+    $mdDialog.show(confirm).then(function() {
+      // $scope.status = 'Kostnad borttagen.';
+      $http.put('api/delcategory', {name: name}).then(function(result) {
+        if (result.data.success) {
+          $scope.fetchData();
+        }
+        else {
+          //todo
+        }
+      });
+    }, function() {
+      // $scope.status = 'Kostnaden togs inte bort.';
+    });
+  };
+
 
   // Alaways load the main layout file, application start point
   $scope.nav = 'partials/main.html';
@@ -214,6 +246,9 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
         break;
       case 'details-view':
         $scope.nav = 'partials/details.html';
+        break;
+      case 'categories':
+        $scope.nav = 'partials/categories.html';
         break;
       default:
         $scope.nav = 'partials/main.html';
@@ -344,7 +379,7 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
   $scope.fetchData = function() {
     $scope.totalCostSelectedMonth = 0;
     $scope.totalSalarySelectedMonth = 0;
-    
+
     $http.get('api/cost').then(function(result) {
       checkTokenExpired(result);
       $scope.costs = result.data;
@@ -355,6 +390,10 @@ app.controller('AppCtrl', function($scope, $http, $q, $mdSidenav, $localStorage,
         },$scope.sortData());
         $scope.sumItUp();
       });
+    });
+
+    $http.get('api/category').then(function(result) {
+      $scope.categories = result.data;
     });
   };
   $scope.fetchData();
@@ -391,14 +430,6 @@ app.controller('compareCharts', function ($scope, $http) {
 
   $scope.chartObject = {};
   $scope.chartObject.type = "ColumnChart";
-
-  // $scope.data1 = [
-  //     {v: 'Oktober'},
-  //     {v: 100},
-  //     {v: '#2857bd'},
-  //     {v: 40},
-  //     {v: '#e2431e'},
-  // ];
 
   $scope.chartObject.data = {'cols': [
       {id: 'test1', label: 'Månad', type: 'string'},

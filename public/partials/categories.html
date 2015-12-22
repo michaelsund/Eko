@@ -1,0 +1,30 @@
+<div class="md-padding">
+  <md-card>
+    <i class="md-padding">Kategorier</i>
+    <md-card-content>
+      <div layout="column">
+        <md-input-container>
+          <label>Ny Kategori</label>
+          <input ng-model="newCategory.name" type="text" required>
+        </md-input-container>
+      </div>
+      <div layout="row" layout-align="center center">
+        <md-button ng-disabled="!newCategory.name" ng-click="addCategory()" class="md-raised md-primary" layout layout-align="center center">Spara</md-button>
+      </div>
+      <center>
+        <i ng-show="!categories.length">Här var de tomt.</i>
+      </center>
+      <md-list ng-repeat="cat in categories">
+        <md-list-item class="md-3-line">
+          <div class="md-list-item-text">
+              <h3>{{cat.name}}</h3>
+          </div>
+          <md-button aria-label="Radera" ng-click="delCategory($event, cat.name)" class="md-fab md-mini md-warn md-raised">
+            <ng-md-icon icon="clear" fill="white"></ng-md-icon>
+          </md-button>
+        </md-list-item>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list>
+    </md-card-content>
+  </md-card>
+</div>

@@ -10,11 +10,10 @@ router.use(function(req, res, next) {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   if (token) {
     jwt.verify(token, config.tokensecret, function(err, decoded) {
-      console.log(err + ' ' + decoded);
-      if (err) { 
-        res.status(200).send({ 
-          success: false, 
-          message: 'Error using token' 
+      if (err) {
+        res.status(200).send({
+          success: false,
+          message: 'Error using token'
         });
       }
       else {
@@ -24,9 +23,9 @@ router.use(function(req, res, next) {
     });
   }
   else {
-    return res.status(200).send({ 
-        success: false, 
-        message: 'No token provided.' 
+    return res.status(200).send({
+        success: false,
+        message: 'No token provided.'
     });
   }
 });
@@ -36,6 +35,7 @@ router.use(function(req, res, next) {
 // ----------------------------------------------------------
 var Salary = require('../models/salary-model').Salary
 var Cost = require('../models/cost-model').Cost
+var Category = require('../models/category-model').Category
 var async = require('async');
 
 
@@ -52,7 +52,6 @@ router.route('/salary'
   }).sort({'date':1});
 }
 ).put(function(req, res) {
-  console.log(JSON.stringify(req.body));
     var s = new Salary({
       'year': req.body.year,
       'month': req.body.month,
@@ -63,7 +62,6 @@ router.route('/salary'
     });
     s.save(function(err) {
       if (err) {
-        console.log(err);
         res.status(400).send({
           'success': false,
           'message': 'Kunde inte lägga till inkomst.'
@@ -81,7 +79,6 @@ router.route('/salary'
 router.delete('/salary/:_id?', function(req, res){
   Salary.findByIdAndRemove(req.params._id, function(err, doc) {
     if (err || !doc) {
-      console.log(err);
       res.status(400).send({
         'success': false
       });
@@ -106,8 +103,6 @@ router.route('/cost'
   }).sort({'date':1});
 }
 ).put(function(req, res) {
-    console.log('new cost!');
-    console.log(req.body);
     var c = new Cost({
       'year': req.body.year,
       'month': req.body.month,
@@ -119,7 +114,6 @@ router.route('/cost'
     });
     c.save(function(err) {
       if (err) {
-        console.log(err);
         res.status(400).send({
           'success': false,
           'message': 'Kunde inte lägga till kostnad.'
@@ -137,7 +131,52 @@ router.route('/cost'
 router.delete('/cost/:_id?', function(req, res){
   Cost.findByIdAndRemove(req.params._id, function(err, doc) {
     if (err || !doc) {
-      console.log(err);
+      res.status(400).send({
+        'success': false
+      });
+    }
+    else {
+      res.status(200).send({
+        'success': true
+      });
+    }
+  });
+});
+
+router.route('/category'
+).get(function (req, res) {
+  Category.find({},{_id:0,__v:0}, function(err, docs) {
+    if (err) {
+      res.status(400).send();
+    }
+    else {
+      res.status(200).send(docs);
+    }
+  });
+}
+
+).put(function(req, res) {
+    var c = new Category(req.body);
+    c.save(function(err) {
+      if (err) {
+        res.status(400).send({
+          'success': false,
+          'message': 'Kunde inte lägga till kategori.'
+        });
+      }
+      else {
+        res.status(200).send({
+          'success': true,
+          'message': 'Kategori tillagd.'
+        });
+      }
+    });
+});
+
+router.route('/delcategory'
+).put(function(req, res) {
+  Category.remove({'name': req.body.name}, function(err, doc) {
+    if (err || !doc) {
       res.status(400).send({
         'success': false
       });
@@ -182,17 +221,13 @@ router.post('/monthschart', function(req, res) {
     }
   ],
   function(err, results){
-    console.log(results);
     var cmp = compareKeys(results[0], results[1]);
     if (cmp) {
-      console.log('match!');
       res.status(200).send(results);
     }
     else {
-      console.log('mismatch!!!');
       var result = [];
       var result = findZeros(results[0], results[1]);
-      console.log('final: ' + JSON.stringify(result));
       res.status(200).send(result);
     }
   });

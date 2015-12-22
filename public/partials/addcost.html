@@ -20,7 +20,7 @@
               <input ng-model="newCost.desc" type="text">
             </md-input-container>
             <md-select placeholder="Välj kategori" ng-model="newCost.category" md-on-open="loadCategories()" style="min-width: 200px;" required>
-              <md-option ng-value="cat" ng-repeat="cat in categories">{{cat}}</md-option>
+              <md-option ng-value="cat" ng-repeat="cat in categories">{{cat.name}}</md-option>
             </md-select>
             <md-input-container>
               <label>Summa</label>
